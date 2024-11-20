@@ -1,0 +1,4 @@
+midea-beautiful-air==0.10.5
+python-dotenv=1.0.1
+firebase-admin
+tapo=0.7.0
