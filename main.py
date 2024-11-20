@@ -1,5 +1,6 @@
 
 import asyncio
+import logging
 
 from midea_beautiful import LanDevice
 from services.firestore_service import get_firestore, get_thresholds
@@ -9,6 +10,8 @@ from utils.envs import load_appliance_ids, load_credentials, load_temp_meter_ids
 
 async def main():
     """Main function to control specific appliances."""
+    setup_logging()
+
     midea_email, midea_password, tapo_email, tapo_password = load_credentials()
     living_room_appliance_id, bedroom_appliance_id, office_appliance_id, attic_appliance_id = load_appliance_ids()
     living_room_temp_meter_id, bedroom_temp_meter_id, office_temp_meter_id, attic_temp_meter_id  = load_temp_meter_ids()
@@ -38,12 +41,12 @@ def check_temperature_for_appliance(
     ):
     current_temperature = temp_meter.current_temperature
     current_state = appliance.state.running
-    print(f"Current temperature: {current_temperature} at: {location}")
+    logging.info(f"Current temperature: {current_temperature} at: {location}")
     if (current_temperature <= turn_on_threshold and current_state == False):
-        print(f"Did not reach turn on threshold: {turn_on_threshold}")
+        logging.info(f"Did not reach turn on threshold: {turn_on_threshold}")
         change_state_of_appliance(appliance, True)
     elif (current_temperature > target_temperature and current_state == True):
-        print(f"Exceeded target temperature: {target_temperature}")
+        logging.info(f"Exceeded target temperature: {target_temperature}")
         change_state_of_appliance(appliance, False)
 
 if __name__ == "__main__":

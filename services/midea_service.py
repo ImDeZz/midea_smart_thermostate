@@ -4,7 +4,7 @@ def get_appliances(email, password, appname="MSmartHome") -> list[LanDevice]:
     """Find and return all appliances associated with the account."""
     appliances = find_appliances(account=email, password=password, appname=appname)
 
-    print(f"Found appliances count: {appliances.__len__()}")
+    logging.info(f"Found appliances count: {appliances.__len__()}")
     return appliances
 
                 
@@ -21,7 +21,7 @@ def get_appliance_by_id(appliances: list[LanDevice], appliance_id: str):
     """
     for appliance in appliances:
         if appliance.state.appliance_id == appliance_id:
-            print(f"Found appliance with id: {appliance_id}")
+            logging.info(f"Found appliance with id: {appliance_id}")
             return appliance
     return None
 
@@ -40,4 +40,4 @@ def change_state_of_appliance(appliance: LanDevice, state: bool):
     appliance.state.running = state
     appliance.apply()
     state_text = "ON" if state else "OFF"
-    print(f"{appliance.name!r} is now turned {state_text}.")
+    logging.info(f"{appliance.name!r} is now turned {state_text}.")
