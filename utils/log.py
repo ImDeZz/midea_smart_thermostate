@@ -2,6 +2,8 @@ import logging
 
 # Set up logging configuration
 def setup_logging():
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
     # Define the log format with timestamp, log level, and custom tag
     log_format = "%(asctime)s [%(levelname)s] - %(message)s"
     logging.basicConfig(
