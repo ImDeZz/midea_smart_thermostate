@@ -22,10 +22,6 @@ async def main():
     start_time, end_time = get_active_times(db)
     is_between_active_times = get_is_between_active_times(start_time, end_time)
     
-    if(not is_between_active_times):
-        logging.info(f"Not between active times, returning...")
-        return
-    
     target_temperature, turn_on_threhold = get_thresholds(db)
     
     appliances = get_appliances(midea_email, midea_password)
@@ -39,17 +35,26 @@ async def main():
         living_room_temp_meter, 
         'Nappali', 
         target_temperature, 
-        turn_on_threhold
+        turn_on_threhold,
+        is_between_active_times,
     )
 
 def check_temperature_for_appliance(
         appliance: LanDevice | None, 
         temp_meter, location: str, 
         target_temperature, 
-        turn_on_threshold
+        turn_on_threshold,
+        is_between_active_times,
     ):
     current_temperature = temp_meter.current_temperature
     current_state = appliance.state.running
+    if(not is_between_active_times):
+        logging.info(f"Not between active times, returning...")
+        if(current_state):
+            logging.info(f"Powering off device.")
+            change_state_of_appliance(appliance, False)
+        return
+
     logging.info(f"Current temperature: {current_temperature} at: {location}")
     if (current_temperature <= turn_on_threshold and current_state == False):
         logging.info(f"Did not reach turn on threshold: {turn_on_threshold}")
