@@ -45,3 +45,11 @@ def get_active_times(db: Client):
     logging.info(f"End time: {end_time}")
     
     return start_time, end_time
+
+def get_is_active(db: Client):
+    doc = db.collection("data").document("status").get()
+    is_active = doc.get("is_active")
+
+    logging.info(f"Service is active: {is_active}")
+    
+    return is_active

@@ -3,7 +3,7 @@ import asyncio
 import logging
 
 from midea_beautiful import LanDevice
-from services.firestore_service import get_active_times, get_firestore, get_thresholds
+from services.firestore_service import get_active_times, get_firestore, get_is_active, get_status, get_thresholds
 from services.midea_service import change_state_of_appliance, get_appliance_by_id, get_appliances
 from services.tapo_service import get_tapo_devices, get_temp_meter_by_id
 from utils.envs import load_appliance_ids, load_credentials, load_temp_meter_ids
@@ -19,6 +19,10 @@ async def main():
     living_room_temp_meter_id, bedroom_temp_meter_id, office_temp_meter_id, attic_temp_meter_id  = load_temp_meter_ids()
 
     db = get_firestore()
+    is_active = get_is_active(db)
+    if(not is_active):
+        logging.info(f"Service is not active, returning...")
+
     start_time, end_time = get_active_times(db)
     is_between_active_times = get_is_between_active_times(start_time, end_time)
     
