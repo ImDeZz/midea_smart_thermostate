@@ -18,6 +18,7 @@ async def main():
     living_room_temp_meter_id, bedroom_temp_meter_id, office_temp_meter_id, attic_temp_meter_id  = load_temp_meter_ids()
 
     db = get_firestore()
+
     target_temperature, turn_on_threhold = get_thresholds(db)
     
     appliances = get_appliances(midea_email, midea_password)

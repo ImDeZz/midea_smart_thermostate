@@ -15,12 +15,14 @@ logging.info(f"Service account path: {service_account_path}")
 
 # Initialize the Firebase app
 def get_firestore() :
+    print(service_account_path)
     cred = credentials.Certificate(service_account_path)
+    print(f"{cred}")
     firebase_admin.initialize_app(cred)
 
     # Access Firestore
     db = firestore.client()
-
+    
     logging.info("Firebase connection initialized successfully.")
     return db
 

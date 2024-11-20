@@ -1,3 +1,4 @@
+import logging
 from midea_beautiful import LanDevice, find_appliances
 
 def get_appliances(email, password, appname="MSmartHome") -> list[LanDevice]:
