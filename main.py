@@ -7,6 +7,7 @@ from services.firestore_service import get_firestore, get_thresholds
 from services.midea_service import change_state_of_appliance, get_appliance_by_id, get_appliances
 from services.tapo_service import get_tapo_devices, get_temp_meter_by_id
 from utils.envs import load_appliance_ids, load_credentials, load_temp_meter_ids
+from utils.log import setup_logging
 
 async def main():
     """Main function to control specific appliances."""
