@@ -27,7 +27,7 @@ def get_firestore() :
     return db
 
 def get_thresholds(db: Client):
-    doc = db.collection("thresholds").document("thresholds").get()
+    doc = db.collection("data").document("thresholds").get()
     target_temperature = doc.get("target_temperature")
     turn_on_threhold = doc.get("turn_on_threhold")
 
@@ -35,3 +35,13 @@ def get_thresholds(db: Client):
     logging.info(f"Turn on temp: {turn_on_threhold}")
     
     return target_temperature, turn_on_threhold
+
+def get_active_times(db: Client):
+    doc = db.collection("data").document("active_times").get()
+    start_time = doc.get("start_time")
+    end_time = doc.get("end_time")
+
+    logging.info(f"Start time: {start_time}")
+    logging.info(f"End time: {end_time}")
+    
+    return start_time, end_time

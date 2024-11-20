@@ -3,11 +3,12 @@ import asyncio
 import logging
 
 from midea_beautiful import LanDevice
-from services.firestore_service import get_firestore, get_thresholds
+from services.firestore_service import get_active_times, get_firestore, get_thresholds
 from services.midea_service import change_state_of_appliance, get_appliance_by_id, get_appliances
 from services.tapo_service import get_tapo_devices, get_temp_meter_by_id
 from utils.envs import load_appliance_ids, load_credentials, load_temp_meter_ids
 from utils.log import setup_logging
+from utils.time_util import get_is_between_active_times
 
 async def main():
     """Main function to control specific appliances."""
@@ -18,7 +19,13 @@ async def main():
     living_room_temp_meter_id, bedroom_temp_meter_id, office_temp_meter_id, attic_temp_meter_id  = load_temp_meter_ids()
 
     db = get_firestore()
-
+    start_time, end_time = get_active_times(db)
+    is_between_active_times = get_is_between_active_times(start_time, end_time)
+    
+    if(not is_between_active_times):
+        logging.info(f"Not between active times, returning...")
+        return
+    
     target_temperature, turn_on_threhold = get_thresholds(db)
     
     appliances = get_appliances(midea_email, midea_password)
