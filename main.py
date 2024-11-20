@@ -3,7 +3,7 @@ import asyncio
 import logging
 
 from midea_beautiful import LanDevice
-from services.firestore_service import get_active_times, get_firestore, get_is_active, get_status, get_thresholds
+from services.firestore_service import get_active_times, get_firestore, get_is_active, get_thresholds
 from services.midea_service import change_state_of_appliance, get_appliance_by_id, get_appliances
 from services.tapo_service import get_tapo_devices, get_temp_meter_by_id
 from utils.envs import load_appliance_ids, load_credentials, load_temp_meter_ids
