@@ -6,6 +6,7 @@ from google.cloud.firestore_v1 import Client
 import os
 
 from models.active_time import ActiveTime, ActiveTimeList
+from models.temperature import Temperature
 
 # Get the directory where the script is located
 script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -76,3 +77,38 @@ def get_is_active(db: Client):
     logging.info(f"Service is active: {is_active}")
     
     return is_active
+
+
+def add_temperature_to_history(db: Client, temperature: Temperature):
+    """
+    Add a Temperature object to the Firestore temperature history if the service is active.
+
+    Args:
+        db (firestore.Client): Firestore client instance.
+        temperature (Temperature): The Temperature object to add.
+
+    Returns:
+        bool: True if the temperature was added, False otherwise.
+    """
+    # Check if the service is active
+    doc = db.collection("data").document("status").get()
+    is_active = doc.get("is_active")
+
+    logging.info(f"Service is active: {is_active}")
+
+    if not is_active:
+        logging.warning("Service is inactive. Temperature will not be added.")
+        return False
+
+    temperature_data = {
+        "id": temperature.id,
+        "nickname": temperature.nickname,
+        "current_temp": temperature.current_temp,
+        "timestamp": temperature.timestamp
+    }
+
+    # Add to Firestore collection
+    db.collection("history").add(temperature_data)
+    logging.info(f"Temperature data added to history: {temperature_data}")
+    return True
+

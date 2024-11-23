@@ -1,9 +1,11 @@
 
 import asyncio
+from datetime import datetime
 import logging
 
 from midea_beautiful import LanDevice
-from services.firestore_service import get_active_times, get_firestore, get_is_active
+from models.temperature import Temperature
+from services.firestore_service import add_temperature_to_history, get_active_times, get_firestore, get_is_active
 from services.midea_service import change_state_of_appliance, get_appliance_by_id, get_appliances
 from services.tapo_service import get_tapo_devices, get_temp_meter_by_id
 from utils.envs import load_appliance_ids, load_credentials, load_temp_meter_ids
@@ -39,11 +41,18 @@ async def main():
     check_temperature_for_appliance(
         living_room_appliance,
         living_room_temp_meter, 
-        'Nappali', 
+        living_room_temp_meter.nickname, 
         target_temperature, 
         turn_on_threshold,
         active,
     )
+    temperature = Temperature(
+        id=living_room_temp_meter_id,
+        nickname=living_room_temp_meter.nickname,
+        current_temp=living_room_temp_meter.current_temperature,
+        timestamp=datetime.now()
+    )
+    add_temperature_to_history(db, temperature)
 
 def check_temperature_for_appliance(
         appliance: LanDevice | None, 
