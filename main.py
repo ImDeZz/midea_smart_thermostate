@@ -3,12 +3,11 @@ import asyncio
 import logging
 
 from midea_beautiful import LanDevice
-from services.firestore_service import get_active_times, get_firestore, get_is_active, get_thresholds
+from services.firestore_service import get_active_times, get_firestore, get_is_active
 from services.midea_service import change_state_of_appliance, get_appliance_by_id, get_appliances
 from services.tapo_service import get_tapo_devices, get_temp_meter_by_id
 from utils.envs import load_appliance_ids, load_credentials, load_temp_meter_ids
 from utils.log import setup_logging
-from utils.time_util import get_is_between_active_times
 
 async def main():
     """Main function to control specific appliances."""
@@ -20,14 +19,17 @@ async def main():
 
     db = get_firestore()
     is_active = get_is_active(db)
+    active_times_list = get_active_times(db)
+    active = active_times_list.get_active()
+    target_temperature = 0
+    turn_on_threshold = 99
     if(not is_active):
         logging.info(f"Service is not active, returning...")
+        active = None
+    elif (active is not None): 
+        target_temperature = active.max_temp
+        turn_on_threshold = active.min_temp
 
-    start_time, end_time = get_active_times(db)
-    is_between_active_times = get_is_between_active_times(start_time, end_time)
-    
-    target_temperature, turn_on_threhold = get_thresholds(db)
-    
     appliances = get_appliances(midea_email, midea_password)
     living_room_appliance = get_appliance_by_id(appliances, living_room_appliance_id)
 
@@ -39,8 +41,8 @@ async def main():
         living_room_temp_meter, 
         'Nappali', 
         target_temperature, 
-        turn_on_threhold,
-        is_between_active_times,
+        turn_on_threshold,
+        active,
     )
 
 def check_temperature_for_appliance(
@@ -48,12 +50,12 @@ def check_temperature_for_appliance(
         temp_meter, location: str, 
         target_temperature, 
         turn_on_threshold,
-        is_between_active_times,
+        active,
     ):
     current_temperature = temp_meter.current_temperature
     current_state = appliance.state.running
-    if(not is_between_active_times):
-        logging.info(f"Not between active times, returning...")
+    if(active is None):
+        logging.info(f"Not between active times or turned off, returning...")
         if(current_state):
             logging.info(f"Powering off device.")
             change_state_of_appliance(appliance, False)
@@ -69,3 +71,4 @@ def check_temperature_for_appliance(
 
 if __name__ == "__main__":
     asyncio.run(main())
+

@@ -1,8 +1,11 @@
 import logging
+from typing import Optional
 import firebase_admin
 from firebase_admin import credentials, firestore
 from google.cloud.firestore_v1 import Client
 import os
+
+from models.active_time import ActiveTime, ActiveTimeList
 
 # Get the directory where the script is located
 script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -15,9 +18,7 @@ logging.info(f"Service account path: {service_account_path}")
 
 # Initialize the Firebase app
 def get_firestore() :
-    print(service_account_path)
     cred = credentials.Certificate(service_account_path)
-    print(f"{cred}")
     firebase_admin.initialize_app(cred)
 
     # Access Firestore
@@ -26,25 +27,47 @@ def get_firestore() :
     logging.info("Firebase connection initialized successfully.")
     return db
 
-def get_thresholds(db: Client):
-    doc = db.collection("data").document("thresholds").get()
-    target_temperature = doc.get("target_temperature")
-    turn_on_threhold = doc.get("turn_on_threhold")
+def get_active_times(db: Client, document_path: str = "data/active_times") -> Optional[ActiveTimeList]:
+    """
+    Fetch and deserialize active times from Firestore.
 
-    logging.info(f"Target temp: {target_temperature}")
-    logging.info(f"Turn on temp: {turn_on_threhold}")
-    
-    return target_temperature, turn_on_threhold
+    Args:
+        db (Client): Firestore client instance.
+        document_path (str): Path to the Firestore document containing active times.
 
-def get_active_times(db: Client):
-    doc = db.collection("data").document("active_times").get()
-    start_time = doc.get("start_time")
-    end_time = doc.get("end_time")
+    Returns:
+        Optional[ActiveTimeList]: A populated ActiveTimeList object, or None if the document doesn't exist or fails to load.
+    """
+    try:
+        # Fetch the document from Firestore
+        doc_ref = db.document(document_path)
+        doc = doc_ref.get()
 
-    logging.info(f"Start time: {start_time}")
-    logging.info(f"End time: {end_time}")
-    
-    return start_time, end_time
+        if not doc.exists:
+            logging.warning(f"Document {document_path} does not exist.")
+            return None
+
+        # Deserialize the document into ActiveTimeList
+        data = doc.to_dict()
+        active_time_list = ActiveTimeList()
+
+        for item in data.get("active_times", []):
+            active_time = ActiveTime(
+                start_time=item.get("start_time"),
+                end_time=item.get("end_time"),
+                day=item.get("day"),
+                min_temp=item.get("min_temp"),
+                max_temp=item.get("max_temp")
+            )
+            active_time_list.add_active_time(active_time)
+
+        logging.info(f"Loaded active times: {active_time_list}")
+        return active_time_list
+
+    except Exception as e:
+        logging.error(f"Failed to fetch or parse active times from Firestore: {e}")
+        return None
+
 
 def get_is_active(db: Client):
     doc = db.collection("data").document("status").get()
