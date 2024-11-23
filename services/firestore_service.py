@@ -101,7 +101,7 @@ def add_temperature_to_history(db: Client, temperature: Temperature):
         return False
 
     temperature_data = {
-        "id": temperature.thermometer_id,
+        "thermometer_id": temperature.thermometer_id,
         "nickname": temperature.nickname,
         "current_temp": temperature.current_temp,
         "timestamp": temperature.timestamp
