@@ -47,7 +47,7 @@ async def main():
         active,
     )
     temperature = Temperature(
-        id=living_room_temp_meter_id,
+        thermometer_id=living_room_temp_meter_id,
         nickname=living_room_temp_meter.nickname,
         current_temp=living_room_temp_meter.current_temperature,
         timestamp=datetime.now()
