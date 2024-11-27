@@ -4,8 +4,11 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from google.cloud.firestore_v1 import Client
 import os
+from google.cloud import firestore as fs
+
 
 from models.active_time import ActiveTime, ActiveTimeList
+from models.status import Status
 from models.temperature import Temperature
 
 # Get the directory where the script is located
@@ -70,13 +73,19 @@ def get_active_times(db: Client, document_path: str = "data/active_times") -> Op
         return None
 
 
-def get_is_active(db: Client):
+def get_status(db: Client) -> Status:
     doc = db.collection("data").document("status").get()
-    is_active = doc.get("is_active")
+    data = doc.to_dict()
 
-    logging.info(f"Service is active: {is_active}")
+    status = Status(
+        is_active=data.get("is_active"),
+        state_by_script=data.get("state_by_script"),
+        state_by_script_date=data.get("state_by_script_date")
+    )
+
+    logging.info(f"Status: {status}")
     
-    return is_active
+    return status
 
 
 def add_temperature_to_history(db: Client, temperature: Temperature):
@@ -112,3 +121,13 @@ def add_temperature_to_history(db: Client, temperature: Temperature):
     logging.info(f"Temperature data added to history: {temperature_data}")
     return True
 
+
+def set_state_by_script(db: Client, state: bool):
+    db.collection("data").document("status").set({
+        "state_by_script": state,
+        "state_by_script_date": fs.SERVER_TIMESTAMP
+    }, merge=True)
+    logging.info(f"State set by script: {state}")
+
+def get_state_by_script(db: Client): 
+    return False
