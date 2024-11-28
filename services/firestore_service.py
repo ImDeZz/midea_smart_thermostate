@@ -27,9 +27,8 @@ def get_firestore() :
 
     # Access Firestore
     db = firestore.client()
-    logging.info("ssssssssssssss.")
+    
     logging.info("Firebase connection initialized successfully.")
-    logging.info("Fisadsadsadsadas.")
     return db
 
 def get_active_times(db: Client, document_path: str = "data/active_times") -> Optional[ActiveTimeList]:
@@ -75,8 +74,10 @@ def get_active_times(db: Client, document_path: str = "data/active_times") -> Op
 
 
 def get_status(db: Client) -> Status:
-    doc = db.collection("data").document("status").get()
-
+    docref = db.collection("data").document("status")
+    logging.info(f"{docref}")
+    doc = docref.get()
+    logging.info(f"{doc}")
     status = Status(
         is_active=doc.get("is_active"),
         state_by_script=doc.get("state_by_script"),

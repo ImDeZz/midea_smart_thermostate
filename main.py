@@ -19,11 +19,10 @@ async def main():
     midea_email, midea_password, tapo_email, tapo_password = load_credentials()
     living_room_appliance_id, bedroom_appliance_id, office_appliance_id, attic_appliance_id = load_appliance_ids()
     living_room_temp_meter_id, bedroom_temp_meter_id, office_temp_meter_id, attic_temp_meter_id  = load_temp_meter_ids()
-    logging.info(f"11111111...")
     db = get_firestore()
     logging.info(f"S22222222...")
     status = get_status(db)
-    print(f"{status}")
+    logging.info(f"{status}")
     active_times_list = get_active_times(db)
     active = active_times_list.get_active()
     target_temperature = 0
