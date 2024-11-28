@@ -77,6 +77,7 @@ def get_status(db: Client) -> Status:
     docref = db.collection("data").document("status")
     try:
         logging.info(f"{docref}")
+        print(f"{db.collection("data").document("sta").set({"s":"s"})}")
         doc = docref.get()
         logging.info(f"{doc}")
         status = Status(
