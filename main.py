@@ -47,6 +47,7 @@ async def main():
         turn_on_threshold,
         active,
         status,
+        db,
     )
     temperature = Temperature(
         thermometer_id=living_room_temp_meter_id,
@@ -63,6 +64,7 @@ def check_temperature_for_appliance(
         turn_on_threshold,
         active,
         status: Status,
+        db,
     ):
     current_temperature = temp_meter.current_temperature
     current_state = appliance.state.running
@@ -77,11 +79,11 @@ def check_temperature_for_appliance(
     if (current_temperature <= turn_on_threshold and current_state == False):
         logging.info(f"Did not reach turn on threshold: {turn_on_threshold}")
         change_state_of_appliance(appliance, True)
-        set_state_by_script(True)
+        set_state_by_script(db, True)
     elif (current_temperature > target_temperature and current_state == True):
         logging.info(f"Exceeded target temperature: {target_temperature}")
         change_state_of_appliance(appliance, False)
-        set_state_by_script(False)
+        set_state_by_script(db, False)
 
 if __name__ == "__main__":
     asyncio.run(main())
