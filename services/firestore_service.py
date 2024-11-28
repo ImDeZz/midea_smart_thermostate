@@ -24,8 +24,13 @@ def get_firestore() :
     firebase_admin.initialize_app(cred)
 
     # Access Firestore
+    print(f"Accessing : {service_account_path}")
     db = firestore.client()
+    docref = db.collection("data").document("status")
     
+    logging.info(f"{docref}")
+    doc = docref.get(timeout=7)
+    logging.info(f"{doc}")
     logging.info("Firebase connection initialized successfully.")
     return db
 
@@ -73,18 +78,15 @@ def get_active_times(db: Client, document_path: str = "data/active_times") -> Op
 
 def get_status(db: Client) -> Status:
     docref = db.collection("data").document("status")
-    try:
-        logging.info(f"{docref}")
-        doc = docref.get()
-        logging.info(f"{doc}")
-        status = Status(
-            is_active=doc.get("is_active"),
-            state_by_script=doc.get("state_by_script"),
-            state_by_script_date=doc.get("state_by_script_date")
-        )
-    except Exception as e:
-        logging.error(f"Error fetching Firestore document: {e}")
-    return None
+    
+    logging.info(f"{docref}")
+    doc = docref.get(timeout=7)
+    logging.info(f"{doc}")
+    status = Status(
+        is_active=doc.get("is_active"),
+        state_by_script=doc.get("state_by_script"),
+        state_by_script_date=doc.get("state_by_script_date")
+    )
 
     logging.info(f"Status: {status}")
     
