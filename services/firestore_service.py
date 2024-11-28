@@ -4,8 +4,6 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from google.cloud.firestore_v1 import Client
 import os
-from google.cloud import firestore as fs
-
 
 from models.active_time import ActiveTime, ActiveTimeList
 from models.status import Status
@@ -77,8 +75,6 @@ def get_status(db: Client) -> Status:
     docref = db.collection("data").document("status")
     try:
         logging.info(f"{docref}")
-        db.collection("data").document("sta").set({"s":"s"})
-        print(f"ssssss")
         doc = docref.get()
         logging.info(f"{doc}")
         status = Status(
@@ -132,7 +128,7 @@ def add_temperature_to_history(db: Client, temperature: Temperature):
 def set_state_by_script(db: Client, state: bool):
     db.collection("data").document("status").set({
         "state_by_script": state,
-        "state_by_script_date": fs.SERVER_TIMESTAMP
+        "state_by_script_date": 1
     }, merge=True)
     logging.info(f"State set by script: {state}")
 
