@@ -27,8 +27,9 @@ def get_firestore() :
 
     # Access Firestore
     db = firestore.client()
-    
+    logging.info("ssssssssssssss.")
     logging.info("Firebase connection initialized successfully.")
+    logging.info("Fisadsadsadsadas.")
     return db
 
 def get_active_times(db: Client, document_path: str = "data/active_times") -> Optional[ActiveTimeList]:
