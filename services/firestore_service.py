@@ -75,14 +75,18 @@ def get_active_times(db: Client, document_path: str = "data/active_times") -> Op
 
 def get_status(db: Client) -> Status:
     docref = db.collection("data").document("status")
-    logging.info(f"{docref}")
-    doc = docref.get()
-    logging.info(f"{doc}")
-    status = Status(
-        is_active=doc.get("is_active"),
-        state_by_script=doc.get("state_by_script"),
-        state_by_script_date=doc.get("state_by_script_date")
-    )
+    try:
+        logging.info(f"{docref}")
+        doc = docref.get()
+        logging.info(f"{doc}")
+        status = Status(
+            is_active=doc.get("is_active"),
+            state_by_script=doc.get("state_by_script"),
+            state_by_script_date=doc.get("state_by_script_date")
+        )
+    except Exception as e:
+        logging.error(f"Error fetching Firestore document: {e}")
+    return None
 
     logging.info(f"Status: {status}")
     
