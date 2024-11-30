@@ -13,7 +13,7 @@ from models.temperature import Temperature
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
 # Build the path to the secrets folder
-service_account_path = os.path.join(script_dir, "..", "secrets", "midea_smart_thermostate_service_account.json")
+service_account_path = os.path.join(script_dir, "..", "secrets", "foglalok.json")
 
 # Optionally, print to verify the correct path
 logging.info(f"Service account path: {service_account_path}")
