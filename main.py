@@ -8,6 +8,7 @@ from models.status import Status
 from models.temperature import Temperature
 from services.firestore_service import add_temperature_to_history, get_active_times, get_firestore, get_status, set_state_by_script
 from services.midea_service import change_state_of_appliance, get_appliance_by_id, get_appliances
+from services.supabase_service import insert_user
 from services.tapo_service import get_tapo_devices, get_temp_meter_by_id
 from utils.envs import load_appliance_ids, load_credentials, load_temp_meter_ids
 from utils.log import setup_logging
@@ -16,6 +17,8 @@ async def main():
     """Main function to control specific appliances."""
     setup_logging()
 
+    insert_user()
+    return
     midea_email, midea_password, tapo_email, tapo_password = load_credentials()
     living_room_appliance_id, bedroom_appliance_id, office_appliance_id, attic_appliance_id = load_appliance_ids()
     living_room_temp_meter_id, bedroom_temp_meter_id, office_temp_meter_id, attic_temp_meter_id  = load_temp_meter_ids()
