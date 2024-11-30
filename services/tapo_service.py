@@ -3,7 +3,7 @@ from tapo import ApiClient
 
 async def get_tapo_devices(email: str, password: str):
     client = ApiClient(email, password)
-    ip = '192.168.100.71'
+    ip = '192.168.100.71' # TODO: Get this from the Firestore
     logging.info(f"Connecting to hub at: {ip}")
     hub = await client.h100(ip)
     child_device_list = await hub.get_child_device_list()
