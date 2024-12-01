@@ -27,3 +27,10 @@ def load_temp_meter_ids():
     office_temp_meter_id = os.getenv("OFFICE_TEMP_METER")
     attic_temp_meter_id = os.getenv("ATTIC_TEMP_METER")
     return living_room_temp_meter_id, bedroom_temp_meter_id, office_temp_meter_id, attic_temp_meter_id 
+
+def load_supabase_vars():
+    """Load Supabase vars from environment variables."""
+    load_dotenv()
+    supabase_url = os.getenv("SUPABASE_URL")
+    supabase_key = os.getenv("SUPABASE_KEY")
+    return supabase_url, supabase_key

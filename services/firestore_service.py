@@ -20,12 +20,11 @@ logging.info(f"Service account path: {service_account_path}")
 
 # Initialize the Firebase app
 def get_firestore() :
-    print(f"Accessing : {service_account_path}")
     cred = credentials.Certificate(service_account_path)
-    app = firebase_admin.initialize_app(cred)
-    print(f"App name: {app.name}")
-    print(f"App project id: {app.project_id}")
+    firebase_admin.initialize_app(cred)
+
     # Access Firestore
+    print(f"Accessing : {service_account_path}")
     db = firestore.client()
     docref = db.collection("data").document("status")
     
