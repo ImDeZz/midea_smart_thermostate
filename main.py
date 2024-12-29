@@ -30,6 +30,7 @@ async def main():
     if(not status.is_active):
         logging.info(f"Service is not active, returning...")
         active = None
+        return
     elif (active is not None): 
         target_temperature = active.max_temp
         turn_on_threshold = active.min_temp
