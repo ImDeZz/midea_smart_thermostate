@@ -47,9 +47,9 @@ def get_status(db: Client, thermometer_id: int) -> Status:
     response = db.table('status').select('*').filter('thermometer_id', 'eq', thermometer_id).execute()
     print(f"{response.data}")
     status = Status(
-        is_active=True,
-        state_by_script=True,
-        state_by_script_date=""
+        is_active=response.data[0]["is_active"],
+        state_by_script=response.data[0]["state_by_script"],
+        state_by_script_date=response.data[0]["state_by_script_date"]
     )
 
     logging.info(f"Status: {status}")
